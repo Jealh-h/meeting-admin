@@ -1,20 +1,18 @@
 import React, { useState } from "react";
-import { Button, Descriptions, Result, Avatar, Dropdown, Menu } from "antd";
+import { Button, Avatar, Dropdown, Menu } from "antd";
 import { Switch, Route, Link } from "react-router-dom";
 import {
-  PlusCircleOutlined,
   UserOutlined,
   SettingOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import ProLayout, {
-  PageContainer,
-  SettingDrawer,
-} from "@ant-design/pro-layout";
+import ProLayout, { PageContainer } from "@ant-design/pro-layout";
+import { useSelector } from "react-redux";
 
 import defaultProps from "./_defaultProps";
 import BookingHistory from "./bookingHistory/index";
 import MeetingRoom from "./meetingRoom";
+import UserList from "./userList";
 import "./index.less";
 
 const UserMenu = (
@@ -31,9 +29,11 @@ const UserMenu = (
   </Menu>
 );
 
-export default () => {
+export default (props) => {
   const [settings, setSetting] = useState({ fixSiderbar: false });
+  //页面初始location
   const [pathname, setPathname] = useState("/index/meeting-room");
+  const isLoading = useSelector((rootState) => rootState.loading.global);
   return (
     <div
       id="test-pro-layout"
@@ -43,6 +43,7 @@ export default () => {
     >
       <ProLayout
         {...defaultProps}
+        // loading={isLoading}
         title="校园会议室"
         logo="https://wx.qlogo.cn/mmhead/Q3auHgzwzM53cxTn0SXNGGHOFEwpxZGpc7nbz4tjt6sdpbEWYEicewA/0"
         location={{
@@ -69,38 +70,13 @@ export default () => {
         )}
         {...settings}
       >
-        <PageContainer
-          //   content={content}
-          tabList={[
-            {
-              tab: "基本信息",
-              key: "base",
-            },
-            {
-              tab: "详细信息",
-              key: "info",
-            },
-          ]}
-          extra={[
-            <Button
-              key="addRoom"
-              shape="round"
-              type="primary"
-              icon={<PlusCircleOutlined />}
-            >
-              添加会议室
-            </Button>,
-            <Button key="2">操作</Button>,
-            <Button key="1" type="primary">
-              主操作
-            </Button>,
-          ]}
-        >
+        <PageContainer>
           <div
             style={{
               height: "120vh",
             }}
           >
+            {/* 路由 */}
             <Switch>
               <Route
                 exact
@@ -112,6 +88,7 @@ export default () => {
                 path="/index/booking-history"
                 component={BookingHistory}
               ></Route>
+              <Route exact path="/index/user-list" component={UserList}></Route>
             </Switch>
           </div>
         </PageContainer>

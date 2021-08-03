@@ -7,15 +7,19 @@
     "@ant-design/pro-layout": "^6.23.2",
     "@ant-design/pro-table": "^2.46.1",
     "@craco/craco": "^6.2.0",
+    "@rematch/core": "^2.0.1",
+    "@rematch/loading": "^2.0.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "antd": "^4.16.9",
+    "axios": "^0.21.1",
     "babel-plugin-import": "^1.13.3",
     "craco-less": "^1.18.0",
     "less": "^4.1.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "web-vitals": "^1.0.1"
@@ -43,5 +47,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "typescript": "^4.3.5"
   }
 }
