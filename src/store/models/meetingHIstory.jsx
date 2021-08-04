@@ -12,13 +12,22 @@ export const meetingHistory = {
         ...payload,
       };
     },
+    _add(state, payload) {
+      return {
+        ...payload,
+      };
+    },
   },
   effects: (dispatch) => {
     const { meetingHistory } = dispatch;
     return {
-      async getSubscribeList(param) {
+      async getSubscribeList() {
         const res = await axios.get("subscribeHistory/selectAll");
         meetingHistory._getData(res);
+      },
+      async deleteHistory(id) {
+        await axios.get("subscribeHistory/delete");
+        meetingHistory.getSubscribeList();
       },
     };
   },

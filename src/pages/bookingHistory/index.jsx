@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProTable from "@ant-design/pro-table";
 import { Button } from "antd";
 import { connect } from "react-redux";
@@ -70,58 +70,27 @@ const columns = [
 ];
 
 const BookingHistory = (props) => {
-  let data = [];
-  async function getBookingHistory() {
-    await props.meetingHistoryApi.getSubscribeList();
-    props.meetingHistoryState.data.map((item, index) => {
-      item.key = item.id;
-      data.push(item);
-    });
-    return {
-      data: data,
-      success: true,
-      total: data.length,
-    };
-  }
-  function pushData() {
-    data.push({
-      key: 199,
-      id: 199,
-      day: "8-06",
-      subscribeTime: "18:00-20:00",
-      meetingRoom: {
-        id: 1,
-        name: "会议室2",
-        subscribeHistoryIds: "",
-        maxNum: 123,
-        applictionId: "zljh864sfacklwl50q",
-        applictionSecrit: "ulcklrtmnbcvc4qw6fqcs9p3263",
-        productId: "5fv7p6fnag7m67w",
-        deviceId: "JY01;JY219AB3A8CC86;86CCA8B39A21",
-        msgId: 123,
-        ablity: "open",
-        service: '{"id":"123456"}',
-      },
-      status: "已预约",
-      meetingUsers: {
-        id: 30,
-        userName: "5120173358",
-        openId: null,
-        mobile: "15681915887",
-        role: null,
-        password: "ty123/*/",
-        isRegister: false,
-      },
-    });
+  // useEffect第二个参数[]
+  // 当数组存在并有值时，如果数组中的任何值发生更改，则每次渲染后都会触发回调。
+  // 当它不存在时，每次渲染后都会触发回调。
+  // 当它是一个空列表时，回调只会被触发一次，类似于 componentDidMount。
+  useEffect(() => {
+    getBookingHistory();
+  }, []);
+
+  function getBookingHistory() {
+    props.meetingHistoryApi.getSubscribeList();
   }
   return (
     <>
-      <Button onClick={pushData}>push</Button>
       <ProTable
+        rowKey="id"
         search={false}
         columns={columns}
         options={false}
-        request={getBookingHistory}
+        loading={props.loading}
+        dataSource={props.meetingHistoryState.data}
+        // request={getBookingHistory}
         pagination={{
           size: "default",
           pageSize: 12,
@@ -133,6 +102,7 @@ const BookingHistory = (props) => {
 
 const mapState = (state) => ({
   meetingHistoryState: state.meetingHistory,
+  loading: state.loading.models.meetingHistory,
 });
 const mapDispatch = (dispatch) => ({
   meetingHistoryApi: dispatch.meetingHistory,

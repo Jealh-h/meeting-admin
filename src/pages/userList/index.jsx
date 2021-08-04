@@ -1,40 +1,16 @@
 import React from "react";
 import { connect } from "react-redux";
 import ProTable from "@ant-design/pro-table";
-import { Button } from "antd";
-
-const columns = [
-  {
-    title: "id",
-    dataIndex: "id",
-  },
-  {
-    title: "用户名",
-    dataIndex: "userName",
-  },
-  {
-    tilte: "手机号",
-    dataIndex: "mobile",
-  },
-  {
-    title: "密码",
-    dataIndex: "password",
-  },
-  {
-    title: "操作",
-    render: (text, record, index) => (
-      <>
-        <Button type="text">删除</Button>
-      </>
-    ),
-  },
-];
+import { Button, Modal, Space } from "antd";
+import { PlusCircleOutlined } from "@ant-design/icons";
 
 class UserList extends React.Component {
   constructor(props) {
     super(props);
   }
-
+  componentDidMount() {
+    this.props.usersApi.getUserList();
+  }
   getUserList = async () => {
     await this.props.usersApi.getUserList();
 
@@ -50,19 +26,91 @@ class UserList extends React.Component {
       total: this.props.usersState.data.length,
     };
   };
+  deleteUserById(record) {
+    Modal.confirm({
+      title: "注意",
+      content: `删除用户: ${record.userName} ?`,
+      onOk: () => {
+        this.props.usersApi.deleteUserById();
+      },
+    });
+  }
+  queryUser = (params, sort, fliter) => {
+    // const queryResult = await this.props.usersApi.queryUser();
+    const queryResult = {};
+    console.log(params);
+    console.log(sort);
+    console.log(fliter);
+    return {
+      //   data: queryResult,
+      data: [],
+      success: true,
+      total: 0,
+    };
+  };
   render() {
+    const columns = [
+      {
+        title: "id",
+        dataIndex: "id",
+      },
+      {
+        title: "用户名",
+        dataIndex: "userName",
+      },
+      {
+        title: "手机号",
+        dataIndex: "mobile",
+      },
+      {
+        title: "密码",
+        dataIndex: "password",
+      },
+      {
+        title: "操作",
+        render: (text, record, index) => (
+          <>
+            <Button
+              type="text"
+              danger
+              onClick={this.deleteUserById.bind(this, record)}
+            >
+              删除
+            </Button>
+          </>
+        ),
+      },
+    ];
     return (
       <>
         <ProTable
           options={false}
           toolbar={{
-            actions: [<Button>添加</Button>, <Button>导入excel</Button>],
+            actions: [
+              <Button icon={<PlusCircleOutlined />}>添加</Button>,
+              <Button type="primary">导入excel</Button>,
+            ],
           }}
-          request={this.getUserList}
+          tableAlertOptionRender={() => {
+            return (
+              <Space size={16}>
+                <a>批量删除</a>
+              </Space>
+            );
+          }}
+          request={this.queryUser}
+          rowKey="id"
+          loading={this.props.loading}
           columns={columns}
+          dataSource={this.props.usersState.data}
           pagination={{
             size: "default",
             pageSize: 12,
+          }}
+          rowSelection={{
+            onChange: (e) => {
+              console.log(e); //选中的id数组
+            },
           }}
         ></ProTable>
       </>
@@ -71,6 +119,7 @@ class UserList extends React.Component {
 }
 const mapState = (state) => ({
   usersState: state.users,
+  loading: state.loading.models.users,
 });
 const mapDispatch = (dispatch) => ({
   usersApi: dispatch.users,

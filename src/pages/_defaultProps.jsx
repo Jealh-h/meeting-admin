@@ -4,6 +4,7 @@ import {
   AntDesignOutlined,
   HomeOutlined,
   ClockCircleOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 
 export default {
@@ -27,9 +28,9 @@ export default {
         icon: <ClockCircleOutlined />,
       },
       {
-        path: "https://ant.design",
-        name: "Ant Design 官网外链",
-        icon: <AntDesignOutlined />,
+        path: "index/admin-setting",
+        name: "个人设置",
+        icon: <SettingOutlined />,
       },
     ],
   },

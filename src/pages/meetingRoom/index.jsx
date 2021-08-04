@@ -1,103 +1,181 @@
 import React from "react";
 import ProTable from "@ant-design/pro-table";
-import { PlusCircleOutlined } from "@ant-design/icons";
+import {
+  PlusCircleOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 import { connect } from "react-redux";
-import { Button } from "antd";
+import { Button, message, Modal, Form, Input } from "antd";
 
-const columns = [
-  {
-    title: "id",
-    dataIndex: "id",
-  },
-  {
-    title: "议论间名字",
-    dataIndex: "name",
-  },
-  {
-    title: "applicationId",
-    dataIndex: "applictionId",
-  },
-  {
-    title: "applictionSecrit",
-    dataIndex: "applictionSecrit",
-  },
-  {
-    title: "productId",
-    dataIndex: "productId",
-  },
-  {
-    title: "deviceId",
-    dataIndex: "deviceId",
-  },
-  {
-    title: "msgId",
-    dataIndex: "msgId",
-  },
-  {
-    title: "ablity",
-    dataIndex: "ablity",
-  },
-  {
-    title: "service",
-    dataIndex: "service",
-  },
-  {
-    title: "操作",
-    dataIndex: "operate",
-    render: (text, record, index) => (
-      <>
-        <Button type="text">删除</Button>
-      </>
-    ),
-  },
-];
+import RoomForm from "../../components/roomForm";
 
 class MeetingRoom extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      open: false,
+      type: "", //用于确认form的提交函数
+      editRowRecord: {},
+    };
+    this.roomFormRef = React.createRef();
   }
 
   getMeetingRoomList = async () => {
     await this.props.MeetingRoomApi.getList();
 
-    // map返回一个新数组,加上一个key属性,protable需要
-    let data = [];
-    this.props.MeetingRoomState.data.map((item, index) => {
-      item.key = item.id;
-      data.push(item);
-    });
     return {
-      data: data,
+      data: this.props.MeetingRoomState.data,
       success: true,
       total: this.props.MeetingRoomState.data.length,
     };
   };
-  componentDidMount() {}
+  componentDidMount() {
+    this.props.MeetingRoomApi.getList();
+    console.log(this.props.MeetingRoomState.data);
+  }
+
+  // 添加房间
+  addMeetingRoom = () => {
+    this.setState({
+      open: true,
+      type: "add",
+    });
+  };
+  // 编辑房间
+  editMeetingRoom = (record) => {
+    this.setState({
+      open: true,
+      type: "edit",
+      editRowRecord: record,
+    });
+  };
+  // 根据id删除房间
+  deleteRoom = (id) => {
+    Modal.confirm({
+      title: "注意",
+      icon: <ExclamationCircleOutlined />,
+      content: `是否删除${id.name}`,
+      okText: "确认",
+      cancelText: "取消",
+      onOk: () => {
+        // this.props.MeetingRoomApi.deleteRoom(id);
+      },
+    });
+  };
   render() {
+    const columns = [
+      {
+        title: "id",
+        dataIndex: "id",
+      },
+      {
+        title: "议论间名字",
+        dataIndex: "name",
+        valueType: "text",
+      },
+      {
+        title: "applicationId",
+        dataIndex: "applictionId",
+      },
+      {
+        title: "最大容量",
+        dataIndex: "maxNum",
+      },
+      {
+        title: "applictionSecrit",
+        dataIndex: "applictionSecrit",
+      },
+      {
+        title: "productId",
+        dataIndex: "productId",
+      },
+      {
+        title: "deviceId",
+        dataIndex: "deviceId",
+      },
+      {
+        title: "msgId",
+        dataIndex: "msgId",
+      },
+      {
+        title: "ablity",
+        dataIndex: "ablity",
+      },
+      {
+        title: "service",
+        dataIndex: "service",
+      },
+      {
+        title: "操作",
+        valueType: "option",
+        render: (text, record, index, action) => (
+          <>
+            <Button
+              type="link"
+              onClick={this.deleteRoom.bind(this, record)}
+              danger
+            >
+              删除
+            </Button>
+            <Button
+              type="link"
+              key="editable"
+              onClick={this.editMeetingRoom.bind(this, record)}
+            >
+              编辑
+            </Button>
+          </>
+        ),
+      },
+    ];
     return (
       <>
         <ProTable
           search={false}
           options={false}
           columns={columns}
+          loading={this.props.loading}
+          dataSource={this.props.MeetingRoomState.data}
+          rowKey="id"
+          // size="small"
+          scroll={{ x: "max-content" }}
           toolbar={{
             actions: [
               <Button
                 key="addRoom"
                 shape="round"
                 type="primary"
+                onClick={this.addMeetingRoom}
                 icon={<PlusCircleOutlined />}
               >
                 添加会议室
               </Button>,
             ],
           }}
-          request={this.getMeetingRoomList}
+          // request={()=>this.getMeetingRoomList}
           pagination={{
             size: "default",
             pageSize: 12,
           }}
         ></ProTable>
+        <Modal
+          title="添加会议室"
+          footer={null}
+          centered={true}
+          destroyOnClose={true}
+          onCancel={() =>
+            this.setState({ open: false, editRowRecord: {}, type: "" })
+          }
+          visible={this.state.open}
+        >
+          <RoomForm
+            type={this.state.type}
+            editRowRecord={this.state.editRowRecord}
+            addMethod={this.props.MeetingRoomApi.addRoom}
+            editeMethod={this.props.MeetingRoomApi.updateRoom}
+            closeModal={() => this.setState({ open: false })}
+          />
+        </Modal>
       </>
     );
   }
@@ -105,6 +183,7 @@ class MeetingRoom extends React.Component {
 
 const mapState = (state) => ({
   MeetingRoomState: state.meetingRoom,
+  loading: state.loading.models.meetingRoom,
 });
 const mapDispatch = (dispatch) => ({
   MeetingRoomApi: dispatch.meetingRoom,

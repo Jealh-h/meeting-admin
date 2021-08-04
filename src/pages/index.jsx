@@ -1,19 +1,25 @@
 import React, { useState } from "react";
-import { Button, Avatar, Dropdown, Menu } from "antd";
+import { Button, Avatar, Dropdown, Menu, Layout } from "antd";
 import { Switch, Route, Link } from "react-router-dom";
 import {
   UserOutlined,
   SettingOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import ProLayout, { PageContainer } from "@ant-design/pro-layout";
+import ProLayout, {
+  PageContainer,
+  DefaultFooter,
+} from "@ant-design/pro-layout";
 import { useSelector } from "react-redux";
 
 import defaultProps from "./_defaultProps";
 import BookingHistory from "./bookingHistory/index";
 import MeetingRoom from "./meetingRoom";
 import UserList from "./userList";
+import Setting from "./setting";
 import "./index.less";
+
+const { Footer } = Layout;
 
 const UserMenu = (
   <Menu>
@@ -32,7 +38,7 @@ const UserMenu = (
 export default (props) => {
   const [settings, setSetting] = useState({ fixSiderbar: false });
   //页面初始location
-  const [pathname, setPathname] = useState("/index/meeting-room");
+  const [pathname, setPathname] = useState(window.location.pathname);
   const isLoading = useSelector((rootState) => rootState.loading.global);
   return (
     <div
@@ -49,7 +55,41 @@ export default (props) => {
         location={{
           pathname,
         }}
-        // loading={true}
+        footerRender={() => (
+          <DefaultFooter
+            links={[
+              {
+                key: "labLink",
+                title: "数据与知识工程实验室",
+                href: "http://iteach.swust.edu.cn/",
+              },
+            ]}
+            copyright="SWUST 计算机科学与技术学院"
+          />
+          // <Footer
+          //   copyright="@2019 蚂蚁金服体验技术部出品"
+          //   links={[
+          //     {
+          //       key: "Ant Design Pro",
+          //       title: "Ant Design Pro",
+          //       href: "https://pro.ant.design",
+          //       blankTarget: true,
+          //     },
+          //     {
+          //       key: "github",
+          //       title: <GithubOutlined />,
+          //       href: "https://github.com/ant-design/ant-design-pro",
+          //       blankTarget: true,
+          //     },
+          //     {
+          //       key: "Ant Design",
+          //       title: "Ant Design",
+          //       href: "https://ant.design",
+          //       blankTarget: true,
+          //     },
+          //   ]}
+          // />
+        )}
         onMenuHeaderClick={(e) => console.log(e)}
         menuItemRender={(item, dom) => (
           <Link
@@ -62,7 +102,7 @@ export default (props) => {
           </Link>
         )}
         rightContentRender={() => (
-          <div style={{ marginRight: "5em" }}>
+          <div style={{ marginRight: "10%" }}>
             <Dropdown overlay={UserMenu} placement="bottomCenter">
               <Avatar shape="square" size="small" icon={<UserOutlined />} />
             </Dropdown>
@@ -89,6 +129,11 @@ export default (props) => {
                 component={BookingHistory}
               ></Route>
               <Route exact path="/index/user-list" component={UserList}></Route>
+              <Route
+                exact
+                path="/index/admin-setting"
+                component={Setting}
+              ></Route>
             </Switch>
           </div>
         </PageContainer>
