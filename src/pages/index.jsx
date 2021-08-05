@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Avatar, Dropdown, Menu, Layout } from "antd";
+import { useState } from "react";
+import { Avatar, Dropdown, Menu, Layout, message } from "antd";
 import { Switch, Route, Link } from "react-router-dom";
 import {
   UserOutlined,
@@ -17,12 +17,18 @@ import BookingHistory from "./bookingHistory/index";
 import MeetingRoom from "./meetingRoom";
 import UserList from "./userList";
 import Setting from "./setting";
+import FeedBack from "./feedback";
 import "./index.less";
+import { useEffect } from "react";
 
 const { Footer } = Layout;
 
+function handleMenuClick(e) {
+  console.log(e);
+}
+
 const UserMenu = (
-  <Menu>
+  <Menu onClick={handleMenuClick}>
     <Menu.Item key="1" icon={<UserOutlined />}>
       个人中心
     </Menu.Item>
@@ -36,6 +42,18 @@ const UserMenu = (
 );
 
 export default (props) => {
+  useEffect(() => {
+    const adminInfo = window.sessionStorage.getItem("admin");
+    if (adminInfo === undefined || adminInfo === "") {
+      message.warn({
+        content: "请登录",
+        duration: 0.5,
+        onClose: () => {
+          window.location.href = "/";
+        },
+      });
+    }
+  }, []);
   const [settings, setSetting] = useState({ fixSiderbar: false });
   //页面初始location
   const [pathname, setPathname] = useState(window.location.pathname);
@@ -134,6 +152,7 @@ export default (props) => {
                 path="/index/admin-setting"
                 component={Setting}
               ></Route>
+              <Route exact path="/index/feedback" component={FeedBack}></Route>
             </Switch>
           </div>
         </PageContainer>

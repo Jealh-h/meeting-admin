@@ -58,6 +58,9 @@ class MeetingRoom extends React.Component {
       okText: "确认",
       cancelText: "取消",
       onOk: () => {
+        message.success({
+          content: "调用删除api",
+        });
         // this.props.MeetingRoomApi.deleteRoom(id);
       },
     });
@@ -66,6 +69,7 @@ class MeetingRoom extends React.Component {
     const columns = [
       {
         title: "id",
+        search: false,
         dataIndex: "id",
       },
       {
@@ -79,6 +83,7 @@ class MeetingRoom extends React.Component {
       },
       {
         title: "最大容量",
+        search: false,
         dataIndex: "maxNum",
       },
       {
@@ -103,10 +108,12 @@ class MeetingRoom extends React.Component {
       },
       {
         title: "service",
+        search: false,
         dataIndex: "service",
       },
       {
         title: "操作",
+        search: false,
         valueType: "option",
         render: (text, record, index, action) => (
           <>

@@ -34,7 +34,7 @@ const RoomForm = (props) => {
     } else if (props.type === "edit") {
       console.log("edit", props);
       successFun = props.editeMethod;
-      // 设置表单初始值
+      // 设置表单初始值--即编辑的信息
       form.setFieldsValue(props.editRowRecord);
     }
   }, []);

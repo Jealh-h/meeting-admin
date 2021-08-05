@@ -1,5 +1,5 @@
 import axios from "../../utils/utils";
-
+import { message } from "antd";
 export const users = {
   state: {
     data: [],
@@ -21,9 +21,20 @@ export const users = {
       },
       async deleteUserById(id) {
         //   删除数据
-        await axios.get("user/deleteById", { id: id });
+        await axios.get("user/deleteById", {
+          params: {
+            id: id,
+          },
+        });
         // 获取新数据
         users.getUserList();
+      },
+      async addUser(param) {
+        message.success({
+          content: "添加用户api",
+        });
+        // await axios.get("user/insert", param);
+        // users.getUserList();
       },
     };
   },

@@ -26,7 +26,11 @@ export const meetingHistory = {
         meetingHistory._getData(res);
       },
       async deleteHistory(id) {
-        await axios.get("subscribeHistory/delete");
+        await axios.get("subscribeHistory/delete", {
+          params: {
+            id: id,
+          },
+        });
         meetingHistory.getSubscribeList();
       },
     };

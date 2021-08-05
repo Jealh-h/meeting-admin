@@ -16,11 +16,12 @@ class Setting extends React.Component {
         >
           <Row>
             <Col span={12} offset={6}>
-              <Form>
+              管理员信息设置建设中
+              {/* <Form>
                 <Form.Item>
                   <Input placeholder="hello" />
                 </Form.Item>
-              </Form>
+              </Form> */}
             </Col>
           </Row>
         </Content>

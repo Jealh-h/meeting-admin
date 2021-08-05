@@ -1,7 +1,7 @@
 import React from "react";
 import {
   UserOutlined,
-  AntDesignOutlined,
+  FormOutlined,
   HomeOutlined,
   ClockCircleOutlined,
   SettingOutlined,
@@ -31,6 +31,11 @@ export default {
         path: "index/admin-setting",
         name: "个人设置",
         icon: <SettingOutlined />,
+      },
+      {
+        path: "index/feedback",
+        name: "反馈",
+        icon: <FormOutlined />,
       },
     ],
   },

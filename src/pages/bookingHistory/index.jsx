@@ -1,73 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ProTable from "@ant-design/pro-table";
-import { Button } from "antd";
+import { Button, Modal } from "antd";
 import { connect } from "react-redux";
-
-const columns = [
-  {
-    title: "Id",
-    dataIndex: "id",
-  },
-  {
-    title: "日期",
-    dataIndex: "day",
-    valueType: "data",
-  },
-  {
-    title: "时间段",
-    dataIndex: "subscribeTime",
-  },
-  {
-    title: "会议室名称",
-    dataIndex: "roomName",
-    render: (text, record, index) => `${record.meetingRoom.name}`,
-  },
-  {
-    title: "状态",
-    dataIndex: "status",
-  },
-  {
-    title: "用户名称",
-    dataIndex: "userName",
-    render: (text, record, index) => `${record.meetingUsers?.userName}`,
-  },
-  {
-    title: "操作",
-    dataIndex: "operate",
-    render: (text, record, index) => (
-      <Button type="text" danger>
-        删除
-      </Button>
-    ),
-  },
-  //   {
-  //     title: "时间段",
-  //     dataIndex: "address",
-  //     valueType: "select",
-  //     filters: true,
-  //     onFilter: true,
-  //     valueEnum: {
-  //       london: {
-  //         text: "伦敦",
-  //       },
-  //       "New York": {
-  //         text: "纽约",
-  //       },
-  //     },
-  //   },
-  //   {
-  //     title: "Action",
-  //     key: "action",
-  //     sorter: true,
-  //     valueType: "option",
-  //     render: () => [
-  //       <a key="delete">Delete</a>,
-  //       <a key="link" className="ant-dropdown-link">
-  //         More actions <DownOutlined />
-  //       </a>,
-  //     ],
-  //   },
-];
 
 const BookingHistory = (props) => {
   // useEffect第二个参数[]
@@ -81,11 +15,61 @@ const BookingHistory = (props) => {
   function getBookingHistory() {
     props.meetingHistoryApi.getSubscribeList();
   }
+  // 删除一条历史
+  function deleteHistory(id) {
+    Modal.confirm({
+      content: "是否删除当前记录?",
+      onOk: () => {
+        props.meetingHistoryApi.deleteHistory(id);
+      },
+    });
+  }
+  const columns = [
+    {
+      title: "Id",
+      search: false,
+      dataIndex: "id",
+    },
+    {
+      title: "日期",
+      dataIndex: "day",
+      valueType: "date",
+    },
+    {
+      title: "时间段",
+      search: false,
+      dataIndex: "subscribeTime",
+    },
+    {
+      title: "会议室名称",
+      dataIndex: "roomName",
+      render: (text, record, index) => `${record.meetingRoom.name}`,
+    },
+    {
+      title: "状态",
+      dataIndex: "status",
+    },
+    {
+      title: "用户名称",
+      dataIndex: "userName",
+      render: (text, record, index) => `${record.meetingUsers?.userName}`,
+    },
+    {
+      title: "操作",
+      search: false,
+      dataIndex: "operate",
+      render: (text, record, index) => (
+        <Button onClick={() => deleteHistory(record.id)} type="text" danger>
+          删除
+        </Button>
+      ),
+    },
+  ];
   return (
     <>
       <ProTable
         rowKey="id"
-        search={false}
+        // search={false}
         columns={columns}
         options={false}
         loading={props.loading}
